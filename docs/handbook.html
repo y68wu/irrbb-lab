@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101928">
+  <meta name="description" content="A four-week technical handbook for the Forward Canadian bank IRRBB simulator.">
+  <title>Project handbook · Forward Balance Sheet Lab</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/handbook.css">
+</head>
+<body class="hb-page">
+<a href="#main" class="skip">Skip to handbook</a>
+<header class="site-header">
+  <div class="shell nav">
+    <a class="brand" href="./"><img src="assets/mark.svg" width="32" height="32" alt=""><strong>FORWARD</strong><span>/ BALANCE SHEET LAB</span></a>
+    <nav aria-label="Main navigation">
+      <a href="./index.html#simulator">Simulator</a><a href="./index.html#scenarios">Scenarios</a><a href="./index.html#balance-sheet">Balance sheet</a><a href="./handbook.html" aria-current="page">Handbook</a>
+    </nav>
+    <a class="source" href="https://github.com/y68wu/irrbb-lab">Source <span aria-hidden="true">↗</span></a>
+  </div>
+</header>
+<main id="main">
+  <section class="hb-hero">
+    <div class="shell">
+      <p class="hb-eyebrow"><span></span> CANADIAN BANKING BOOK / TECHNICAL RECORD</p>
+      <h1>Project<br>handbook<span>.</span></h1>
+      <p class="hb-lede">Follow the build from opening positions and rate curves to the six-shock screen and twelve-month replay. Each day pairs an implementation decision with a check and a source.</p>
+      <dl class="hb-meta">
+        <div><dt>04</dt><dd>Illustrative weeks</dd></div>
+        <div><dt>28</dt><dd>Calendar entries</dd></div>
+        <div><dt>OCT 11–NOV 07</dt><dd>2026</dd></div>
+      </dl>
+    </div>
+  </section>
+  <div class="shell hb-layout">
+    <aside class="hb-sidebar">
+      <nav aria-label="Handbook contents">
+        <h2>Build sequence</h2>
+        <ol>
+          <li><a href="#week-1"><span>01</span>Build the opening book</a></li>
+          <li><a href="#week-2"><span>02</span>Value the six curve shocks</a></li>
+          <li><a href="#week-3"><span>03</span>Project earnings and hedge behavior</a></li>
+          <li><a href="#week-4"><span>04</span>Validate and publish the simulator</a></li>
+        </ol>
+      </nav>
+      <a href="./index.html#simulator" class="hb-cta">Open the simulator <span aria-hidden="true">↗</span></a>
+    </aside>
+    <div class="hb-body">
+      <p class="hb-note"><strong>Calendar note.</strong> These illustrative dates organize a retrospective technical walkthrough. The source observation date and supervisory implementation dates are documented separately.</p>
+      <section class="hb-week" id="week-1" aria-labelledby="week-1-title">
+        <header class="hb-week-header">
+          <p>WEEK 01 <span>/</span> Oct 11–Oct 17</p>
+          <h2 id="week-1-title">Build the opening book</h2>
+          <div>Define the modeled bank, benchmark the rate curve and establish a reproducible repricing schedule.</div>
+        </header>
+        <article class="hb-entry" id="day-01">
+          <div class="hb-day"><span>DAY 01</span><time datetime="2026-10-11">Oct 11 · Sun</time></div>
+          <div>
+            <h3>Set the IRRBB scope</h3>
+            <p>Represent a synthetic Canadian-dollar banking book and measure two different exposures. Economic value of equity is the discounted value of asset cash flows less funding cash flows, plus the swap. Net interest income is earned interest less funding expense over a horizon.</p>
+            <p class="hb-check"><strong>Check.</strong> Keep the opening valuation, shocked valuation, and 12-month earnings path separate in the report. State that the balance sheet is illustrative.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/README.md">Scope and limitations <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-02">
+          <div class="hb-day"><span>DAY 02</span><time datetime="2026-10-12">Oct 12 · Mon</time></div>
+          <div>
+            <h3>Map a bank’s published categories</h3>
+            <p>Use public RBC and TD balance-sheet disclosures to anchor the standalone HELOC share in the modeled secured retail book. Create a CAD 100B synthetic asset book and fund it with CAD 93B of deposits, GICs and wholesale borrowing. Reserve CAD 7B as the illustrative Tier 1 capital input.</p>
+            <p class="hb-check"><strong>Check.</strong> Reconcile the opening assets and funding to the assumed equity. Keep book equity separate from the illustrative Tier 1 capital used in the screen.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/data/README.md">Public inputs and balance-sheet assumptions <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-03">
+          <div class="hb-day"><span>DAY 03</span><time datetime="2026-10-13">Oct 13 · Tue</time></div>
+          <div>
+            <h3>Capture a dated Government of Canada curve</h3>
+            <p>Retrieve official zero-coupon yields, preserve the observation date and keep maturities in years. The Bank of Canada estimates these curves from bond and treasury bill prices and ordinarily publishes the data with a lag. The default observation is October 21, 2026.</p>
+            <p class="hb-check"><strong>Check.</strong> Verify that observations are ordered, rates are in decimal form, and the published observation date is distinct from the date the project is viewed.</p>
+            <a class="hb-evidence" href="https://www.bankofcanada.ca/rates/interest-rates/bond-yield-curves/">Bank of Canada zero curves <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-04">
+          <div class="hb-day"><span>DAY 04</span><time datetime="2026-10-14">Oct 14 · Wed</time></div>
+          <div>
+            <h3>Make the curve reproducible</h3>
+            <p>Use a repeatable refresh step to capture the source inputs and feed a pinned curve snapshot to both the browser and the reporting run. Add three historical opening curves to isolate sensitivity to curve levels and shapes while holding the modeled balance sheet fixed.</p>
+            <p class="hb-check"><strong>Check.</strong> Confirm that an exact input knot reproduces its original value and that the refresh retains its source URL and response hash. Describe historical curve comparisons as controlled experiments.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/scripts/refresh_data.py">Curve refresh script <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-05">
+          <div class="hb-day"><span>DAY 05</span><time datetime="2026-10-15">Oct 15 · Thu</time></div>
+          <div>
+            <h3>Read the Canadian supervisory calibration</h3>
+            <p>Use the Canadian column in the revised guidance. The parallel, short and long shock sizes are 200, 275 and 175 bp respectively. The post-shock curve uses the OSFI floor of −75 bp.</p>
+            <p class="hb-check"><strong>Check.</strong> Use the final B-12 published September 10, 2026. Its effective dates are November 1, 2026 for October fiscal year-ends and January 1, 2027 for December fiscal year-ends.</p>
+            <a class="hb-evidence" href="https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/guideline-b-12-interest-rate-risk-management-2027-letter">Final OSFI B-12 and effective dates <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-06">
+          <div class="hb-day"><span>DAY 06</span><time datetime="2026-10-16">Oct 16 · Fri</time></div>
+          <div>
+            <h3>Translate products into repricing buckets</h3>
+            <p>Place floating positions at their next reset. Allocate fixed-rate positions and runoff by expected timing. Split non-maturity deposits into a short-lived component and a modeled core component to avoid placing their entire balance at contractual overnight.</p>
+            <p class="hb-check"><strong>Check.</strong> Trace the asset and liability principal allocated across buckets back to opening balances. Read the net gap as asset repricing minus liability repricing.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">Repricing implementation <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-07">
+          <div class="hb-day"><span>DAY 07</span><time datetime="2026-10-17">Oct 17 · Sat</time></div>
+          <div>
+            <h3>Verify units and conventions</h3>
+            <p>Use basis points for shocks, decimal rates in valuation, years for curve tenors and CAD for the balance sheet. Define ΔEVE as shocked value minus base value and present a loss as a positive amount for the capital screen.</p>
+            <p class="hb-check"><strong>Check.</strong> Evaluate a zero shock. Confirm that baseline and shocked results coincide and that the unshocked delta is zero within rounding tolerance.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/tests/test_engine.mjs">Model tests <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </section>
+      <section class="hb-week" id="week-2" aria-labelledby="week-2-title">
+        <header class="hb-week-header">
+          <p>WEEK 02 <span>/</span> Oct 18–Oct 24</p>
+          <h2 id="week-2-title">Value the six curve shocks</h2>
+          <div>Build the runoff cash flows, apply the prescribed curve shapes and compare the largest adverse ΔEVE with capital.</div>
+        </header>
+        <article class="hb-entry" id="day-08">
+          <div class="hb-day"><span>DAY 08</span><time datetime="2026-10-18">Oct 18 · Sun</time></div>
+          <div>
+            <h3>Model scheduled mortgage principal</h3>
+            <p>Generate payment-period cash flows for the fixed-rate mortgage book. Distinguish amortization from contractual renewal and model the outstanding principal due by the end of the remaining term.</p>
+            <p class="hb-check"><strong>Check.</strong> Reconcile cumulative scheduled principal, prepayment and the final payoff to the opening balance.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">Cash-flow engine <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-09">
+          <div class="hb-day"><span>DAY 09</span><time datetime="2026-10-19">Oct 19 · Mon</time></div>
+          <div>
+            <h3>Introduce voluntary prepayments</h3>
+            <p>Express annual constant prepayment rate (CPR) as a monthly conditional probability of 1 − (1 − CPR)^(1/12). Apply that probability to eligible mortgage principal. Faster repayments move principal forward and reduce its rate duration.</p>
+            <p class="hb-check"><strong>Check.</strong> Test a zero CPR and a faster CPR, and verify that interest and principal schedules remain internally consistent.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">Behavioral cash-flow engine <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-10">
+          <div class="hb-day"><span>DAY 10</span><time datetime="2026-10-20">Oct 20 · Tue</time></div>
+          <div>
+            <h3>Separate core and non-core deposits</h3>
+            <p>Give core balances a behavioral runoff horizon and let the non-core component reprice faster. Keep deposit decay distinct from deposit beta, which describes how much of a market-rate move reaches the customer rate.</p>
+            <p class="hb-check"><strong>Check.</strong> Sweep the decay assumption and check how the deposit contribution to economic value and the repricing ladder changes.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">Deposit runoff and bank assumptions <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-11">
+          <div class="hb-day"><span>DAY 11</span><time datetime="2026-10-21">Oct 21 · Wed</time></div>
+          <div>
+            <h3>Build the six prescribed curves</h3>
+            <p>Calculate parallel up and down, short up and down, steepener and flattener scenarios. Weight the short component with exp(−t/4), and weight the long component with one minus that factor. Apply the rotation coefficients and the national floor.</p>
+            <p class="hb-check"><strong>Check.</strong> At long tenors, confirm that short shocks fade and the long component dominates rotations. Cross-check the CAD magnitudes and formulas with the source tables.</p>
+            <a class="hb-evidence" href="https://www.bis.org/committees/bcbs/basel-framework/standard/srp/31/inforce/2026-01-01/published/2024-07-16">BCBS SRP31 shock specification <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-12">
+          <div class="hb-day"><span>DAY 12</span><time datetime="2026-10-22">Oct 22 · Thu</time></div>
+          <div>
+            <h3>Full-reprice each scenario</h3>
+            <p>Discount the scenario’s asset, liability and hedge cash flows at the shocked term structure. Show the change against the corresponding unshocked EVE on a common sign convention.</p>
+            <p class="hb-check"><strong>Check.</strong> Review a bond’s direction under an upward move and check a zero-shock valuation before comparing the aggregate bank.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">EVE valuation engine <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-13">
+          <div class="hb-day"><span>DAY 13</span><time datetime="2026-10-23">Oct 23 · Fri</time></div>
+          <div>
+            <h3>Evaluate the outlier threshold</h3>
+            <p>Find the largest loss across the six prescribed EVE scenarios and divide by illustrative Tier 1 capital. Compare the result with the 15% benchmark. The reference book loses CAD 1.207B under parallel up, or 17.24% of illustrative Tier 1. Keep user-scaled shocks separate from the prescribed screen.</p>
+            <p class="hb-check"><strong>Check.</strong> Make the worst case traceable to its scenario. The modeled threshold comparison is a research screen for this synthetic book.</p>
+            <a class="hb-evidence" href="https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/interest-rate-risk-management-guideline-2027">OSFI B-12 outlier test and Annex 1 <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-14">
+          <div class="hb-day"><span>DAY 14</span><time datetime="2026-10-24">Oct 24 · Sat</time></div>
+          <div>
+            <h3>Publish the reference scenario pack</h3>
+            <p>Run the model from the pinned inputs and preserve reference scenario outputs in the repository. Keep the shock shape, opening assumptions, swap notional and units available alongside the values.</p>
+            <p class="hb-check"><strong>Check.</strong> Compare report output with the website’s default presets. Reprice the same book when comparing shocks so the difference has an interpretable source.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/reports/scenarios_unhedged.csv">Published unhedged scenario pack <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </section>
+      <section class="hb-week" id="week-3" aria-labelledby="week-3-title">
+        <header class="hb-week-header">
+          <p>WEEK 03 <span>/</span> Oct 25–Oct 31</p>
+          <h2 id="week-3-title">Project earnings and hedge behavior</h2>
+          <div>Reprice interest income and expense over twelve months, then test how behavioral and hedge assumptions move both measures.</div>
+        </header>
+        <article class="hb-entry" id="day-15">
+          <div class="hb-day"><span>DAY 15</span><time datetime="2026-10-25">Oct 25 · Sun</time></div>
+          <div>
+            <h3>Define the constant-size earnings view</h3>
+            <p>Hold modeled book sizes constant for the 12-month earnings comparison. When principal runs off or matures, replace it within its product class under the model’s rollover convention.</p>
+            <p class="hb-check"><strong>Check.</strong> Confirm that replacement balances keep the simulated book size stable. Keep the runoff EVE calculation separate from this replenished earnings book.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">NII projection engine <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-16">
+          <div class="hb-day"><span>DAY 16</span><time datetime="2026-10-26">Oct 26 · Mon</time></div>
+          <div>
+            <h3>Reprice floating assets and funding</h3>
+            <p>Use short reference rates and assumed spreads to update floating-rate loans and borrowing as they reset. Keep fixed-rate coupons until the cash flows reprice or turn over.</p>
+            <p class="hb-check"><strong>Check.</strong> Check that an immediate short-rate move reaches floating positions before most fixed-rate mortgage balances reprice.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">NII projection engine <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-17">
+          <div class="hb-day"><span>DAY 17</span><time datetime="2026-10-27">Oct 27 · Tue</time></div>
+          <div>
+            <h3>Apply deposit beta to customer pricing</h3>
+            <p>Use a deposit beta to pass through a fraction of a reference-rate shock to the customer deposit rate. A beta of 40% implies 40 bp of rate response to a 100 bp reference-rate change before any modeled floors.</p>
+            <p class="hb-check"><strong>Check.</strong> Compare zero and higher pass-through, and verify that higher beta increases deposit expense under upward rate stress.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">Deposit pricing assumptions <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-18">
+          <div class="hb-day"><span>DAY 18</span><time datetime="2026-10-28">Oct 28 · Wed</time></div>
+          <div>
+            <h3>Compare instant and ramped paths</h3>
+            <p>Apply the full shock at the start in one earnings path and phase in the same endpoint across twelve months in the other. Accumulate monthly NII changes against an unshocked baseline.</p>
+            <p class="hb-check"><strong>Check.</strong> Check that the paths share the endpoint shock but differ in timing. Compare cumulative earnings over the entire horizon, where earlier repricing matters.</p>
+            <a class="hb-evidence" href="./index.html#simulator">Run the scenario <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-19">
+          <div class="hb-day"><span>DAY 19</span><time datetime="2026-10-29">Oct 29 · Thu</time></div>
+          <div>
+            <h3>Size a pay-fixed hedge</h3>
+            <p>Add a pay-fixed, receive-floating swap to offset part of the fixed-rate asset exposure. Use the same opening reference curve to set the fixed swap rate and compare hedge sizes against the unhedged book.</p>
+            <p class="hb-check"><strong>Check.</strong> Check the swap’s opening PV and the direction of its marked value in a parallel-up shock. Keep the hedge notional and the selected shock explicit.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/docs/assets/engine.mjs">Swap valuation engine <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-20">
+          <div class="hb-day"><span>DAY 20</span><time datetime="2026-10-30">Oct 30 · Fri</time></div>
+          <div>
+            <h3>Sweep assumptions one at a time</h3>
+            <p>Vary CPR, core deposit decay, deposit beta and swap notional while keeping the rest of the assumptions fixed. Compare the impact on ΔEVE, 12-month ΔNII and the relevant bucket gaps.</p>
+            <p class="hb-check"><strong>Check.</strong> Separate changes to the original book from changes to the shocked-versus-base comparison. Attribute each result to the parameter changed.</p>
+            <a class="hb-evidence" href="./index.html#simulator">Sensitivity controls <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-21">
+          <div class="hb-day"><span>DAY 21</span><time datetime="2026-10-31">Oct 31 · Sat</time></div>
+          <div>
+            <h3>Compare earnings and valuation trade-offs</h3>
+            <p>Hold the reference assumptions fixed and add a CAD 10B pay-fixed swap. The worst EVE loss falls from 17.24% to 9.49% of Tier 1 and shifts to the steepener. The parallel-down 12-month earnings loss rises from CAD 148.0M to CAD 348.3M.</p>
+            <p class="hb-check"><strong>Check.</strong> Compare the complete shock pack at each hedge size. Review downside earnings as a separate measure from the Tier 1 EVE screen.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/reports/scenarios_hedged.csv">Hedged reference scenarios <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </section>
+      <section class="hb-week" id="week-4" aria-labelledby="week-4-title">
+        <header class="hb-week-header">
+          <p>WEEK 04 <span>/</span> Nov 1–Nov 7</p>
+          <h2 id="week-4-title">Validate and publish the simulator</h2>
+          <div>Expose the model through a browser interface and a repeatable command-line report, with clear evidence and controls.</div>
+        </header>
+        <article class="hb-entry" id="day-22">
+          <div class="hb-day"><span>DAY 22</span><time datetime="2026-11-01">Nov 1 · Sun</time></div>
+          <div>
+            <h3>Share one model across browser and reports</h3>
+            <p>Keep valuation and earnings logic in a single JavaScript module, importable by the interactive site and the Node report generator. Keep the source data and the bank assumptions separate from the rendering layer.</p>
+            <p class="hb-check"><strong>Check.</strong> Use the same inputs and compare the reference outputs from both entry points.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/notebooks/01_irrbb.ipynb">Model analysis notebook <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-23">
+          <div class="hb-day"><span>DAY 23</span><time datetime="2026-11-02">Nov 2 · Mon</time></div>
+          <div>
+            <h3>Design the control panel</h3>
+            <p>Expose scenario, shock size, prepayment rate, deposit beta and hedge notional in a compact form. Keep assumptions visible beside the results and provide a sample action that restores a known configuration.</p>
+            <p class="hb-check"><strong>Check.</strong> Check that editing an input changes the intended variable, and that the sample restores a repeatable run.</p>
+            <a class="hb-evidence" href="./index.html#simulator">Interactive simulator <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-24">
+          <div class="hb-day"><span>DAY 24</span><time datetime="2026-11-03">Nov 3 · Tue</time></div>
+          <div>
+            <h3>Animate the model path</h3>
+            <p>Advance the EVE and cumulative ΔNII charts across the scenario months. Show a progressive curve and month markers as the stress builds, using the model’s monthly states. EVE at each frame revalues the same opening book under the current curve.</p>
+            <p class="hb-check"><strong>Check.</strong> Confirm that the sample endpoint matches the report. The ramped parallel-up sample ends at −CAD 374.0M ΔEVE and +CAD 115.5M cumulative ΔNII.</p>
+            <a class="hb-evidence" href="./index.html#simulator">Dynamic scenario replay <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-25">
+          <div class="hb-day"><span>DAY 25</span><time datetime="2026-11-04">Nov 4 · Wed</time></div>
+          <div>
+            <h3>Test pause, speed and timeline</h3>
+            <p>Add playback controls so the viewer can pause, inspect a month and replay the path. Make the stage and live results available outside the chart as text.</p>
+            <p class="hb-check"><strong>Check.</strong> Run the sample, pause at an intermediate month, scrub to the end and compare it with the result after uninterrupted playback.</p>
+            <a class="hb-evidence" href="./index.html#simulator">Playback controls <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-26">
+          <div class="hb-day"><span>DAY 26</span><time datetime="2026-11-05">Nov 5 · Thu</time></div>
+          <div>
+            <h3>Check endpoint and accounting identities</h3>
+            <p>Test zero shocks, balance reconciliation, direction under controlled curve moves and basic behavior under changed assumptions. Include regression coverage for the shock shapes, rate floor and output horizon.</p>
+            <p class="hb-check"><strong>Check.</strong> Run the automated test suite from a clean checkout. Compare floating-point outputs using tolerance and confirm the reference tables remain reproducible.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/tests/test_engine.mjs">Engine test suite <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-27">
+          <div class="hb-day"><span>DAY 27</span><time datetime="2026-11-06">Nov 6 · Fri</time></div>
+          <div>
+            <h3>Document where the model stops</h3>
+            <p>List the synthetic balance sheet, simplified behavior, static earnings balances and single-curve hedge assumptions. Distinguish the six prescribed EVE shocks from exploratory earnings replays, especially the gradual ramp.</p>
+            <p class="hb-check"><strong>Check.</strong> Make it clear which figures come from the official curve and guidance and which parameters are illustrative model choices.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab/blob/main/README.md">Method and limitations <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+        <article class="hb-entry" id="day-28">
+          <div class="hb-day"><span>DAY 28</span><time datetime="2026-11-07">Nov 7 · Sat</time></div>
+          <div>
+            <h3>Publish the source and share the lab</h3>
+            <p>Publish the static website, the source and the handbook together. Link the simulator to the project’s input refresh, reference outputs and tests so a reviewer can reproduce the example.</p>
+            <p class="hb-check"><strong>Check.</strong> Verify that the sample runs on the published site and that the repo, handbook navigation and scenario links are reachable.</p>
+            <a class="hb-evidence" href="https://github.com/y68wu/irrbb-lab">Public project repository <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </section>
+      <section class="hb-close" aria-label="Run the model">
+        <p>Choose a curve shock and replay the two risk measures.</p>
+        <a href="./index.html#simulator" class="hb-cta">Open the simulator <span aria-hidden="true">↗</span></a>
+      </section>
+    </div>
+  </div>
+</main>
+<footer class="hb-footer">
+  <div class="shell">
+    <a class="brand" href="./"><img src="assets/mark.svg" width="29" height="29" alt=""><strong>FORWARD</strong><span>/ BALANCE SHEET LAB</span></a>
+    <span>Synthetic Canadian bank · Illustrative research</span>
+    <a href="https://github.com/y68wu/irrbb-lab">Source repository ↗</a>
+  </div>
+</footer>
+</body>
+</html>

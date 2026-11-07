@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101928">
+  <meta name="description" content="An interactive Canadian bank IRRBB case study. Reprice EVE and NII under rate shocks, change customer behaviour and test a swap hedge.">
+  <meta property="og:title" content="FORWARD / Balance Sheet Lab">
+  <meta property="og:description" content="Run an interest-rate shock on a synthetic Canadian bank and watch EVE and NII evolve.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://y68wu.github.io/irrbb-lab/assets/share.png">
+  <meta property="og:url" content="https://y68wu.github.io/irrbb-lab/">
+  <title>FORWARD / Balance Sheet Lab</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/site.mjs" type="module"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell nav">
+      <a class="brand" href="./"><img src="assets/mark.svg" width="32" height="32" alt=""><strong>FORWARD</strong><span>/ BALANCE SHEET LAB</span></a>
+      <nav aria-label="Main navigation"><a href="#simulator">Simulator</a><a href="#scenarios">Six-shock screen</a><a href="#balance-sheet">Balance sheet</a><a href="handbook.html">Handbook</a></nav>
+      <a class="source" href="https://github.com/y68wu/irrbb-lab">Source <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <p class="kicker"><i></i> CANADIAN BANKING BOOK <span>/</span> CASE STUDY 03</p>
+          <h1 id="hero-title">The balance sheet <em>moves with rates.</em></h1>
+          <p>A fixed-rate mortgage, a savings deposit and an interest-rate swap react on different clocks. Shock a synthetic Canadian bank and see how its economic value and earnings respond.</p>
+          <div class="actions">
+            <a class="button primary" href="#simulator">Open the simulator <span aria-hidden="true">↓</span></a>
+            <a class="text-link" href="handbook.html">Read the project handbook <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <figure class="hero-chart">
+          <div class="hero-chart-top"><span><i></i> CANADA ZERO CURVE</span><span>FIG. 01</span></div>
+          <svg id="curve-chart" viewBox="0 0 560 262" role="img" aria-label="Opening and shocked Canadian zero-coupon curves"></svg>
+          <figcaption><span><i class="swatch base"></i> Opening</span><span><i class="swatch eve"></i> Shocked</span><span id="curve-case">MODEL CURVE</span></figcaption>
+        </figure>
+      </div>
+      <dl class="shell hero-metrics" aria-label="Project at a glance">
+        <div><dt>OPENING ASSETS</dt><dd id="hero-assets">—</dd><span>Synthetic Canadian bank</span></div>
+        <div><dt>TIER 1 CAPITAL</dt><dd id="hero-capital">—</dd><span>Capital base for EVE screen</span></div>
+        <div><dt>SUPERVISORY SHAPES</dt><dd>06</dd><span>CAD rate shock templates</span></div>
+        <div><dt>EARNINGS HORIZON</dt><dd>12 months</dd><span>Constant-size balance sheet</span></div>
+      </dl>
+    </section>
+
+    <section id="simulator" class="paper band" aria-labelledby="sim-title">
+      <div class="shell">
+        <div class="section-intro">
+          <p class="kicker"><span>01</span> / SCENARIO DESK</p>
+          <div><h2 id="sim-title">Set the shock. Watch the response.</h2><p>Adjust the rate path, mortgage prepayments, deposit pass-through and swap size. The replay moves month by month through EVE and cumulative earnings.</p></div>
+        </div>
+        <div class="desk-grid">
+          <form id="shock-form" class="ticket">
+            <div class="ticket-top"><div><p class="micro">SIMULATION INPUTS</p><h3>Scenario ticket</h3></div><span class="ticket-mark" aria-hidden="true">↗</span></div>
+            <label for="curve-snapshot">Opening zero curve</label>
+            <select id="curve-snapshot" name="curve" disabled></select>
+            <label class="scenario-label" for="scenario">Yield curve shock</label>
+            <select id="scenario" name="scenario" disabled></select>
+            <div class="range-field">
+              <label for="shock-scale">Shock size <output id="shock-scale-value" for="shock-scale">100%</output></label>
+              <input id="shock-scale" name="shockScale" type="range" min="0" max="200" step="5" value="100" disabled>
+              <div class="range-hints"><span>0%</span><span>200% of CAD template</span></div>
+            </div>
+            <div class="range-field">
+              <label for="cpr">Mortgage prepayment <output id="cpr-value" for="cpr">8% CPR</output></label>
+              <input id="cpr" name="cpr" type="range" min="0" max="30" step="1" value="8" disabled>
+            </div>
+            <div class="range-field">
+              <label for="deposit-beta">Deposit beta <output id="deposit-beta-value" for="deposit-beta">0.40</output></label>
+              <input id="deposit-beta" name="depositBeta" type="range" min="0" max="100" step="5" value="40" disabled>
+            </div>
+            <div class="range-field">
+              <label for="deposit-decay">Core deposit decay <output id="deposit-decay-value" for="deposit-decay">4.0 yr</output></label>
+              <input id="deposit-decay" name="depositDecayYears" type="range" min="0.5" max="8" step="0.5" value="4" disabled>
+            </div>
+            <div class="range-field">
+              <label for="hedge">Pay-fixed swap <output id="hedge-value" for="hedge">CAD 0B</output></label>
+              <input id="hedge" name="hedgeNotional" type="range" min="0" max="40" step="1" value="0" disabled>
+            </div>
+            <div class="ticket-actions">
+              <button type="submit" class="button run" id="run-scenario" disabled>Run scenario <span aria-hidden="true">↗</span></button>
+              <button type="button" class="button sample" id="load-sample" disabled>Load sample</button>
+            </div>
+            <p id="ticket-note" class="fine">The six-shock screen uses the full CAD shock templates. The size slider applies to your experimental replay.</p>
+          </form>
+
+          <section id="replay" class="replay" aria-labelledby="replay-title">
+            <div class="replay-top">
+              <div><p class="micro">12-MONTH REPLAY / CAD MILLIONS</p><h3 id="replay-title">Value and earnings</h3></div>
+              <div class="clock"><i aria-hidden="true"></i><div><strong id="replay-month">Month 0 / 12</strong><span id="replay-phase">Opening position</span></div></div>
+            </div>
+            <div class="replay-case" id="active-case">Run a scenario to see the applied assumptions.</div>
+            <div class="mode-rail">
+              <span>Rate path</span>
+              <div class="segments" role="group" aria-label="Rate path timing">
+                <button id="mode-instant" type="button" aria-pressed="true" disabled>Instant</button>
+                <button id="mode-ramp" type="button" aria-pressed="false" disabled>Ramp</button>
+              </div>
+            </div>
+            <div class="replay-graphs">
+              <figure>
+                <figcaption><span><i class="swatch eve"></i> ΔEVE</span><strong id="live-eve">—</strong></figcaption>
+                <svg id="eve-chart" viewBox="0 0 560 173" role="img" aria-label="Change in economic value of equity across the 12-month replay"></svg>
+              </figure>
+              <figure>
+                <figcaption><span><i class="swatch nii"></i> Cumulative ΔNII</span><strong id="live-nii">—</strong></figcaption>
+                <svg id="nii-chart" viewBox="0 0 560 173" role="img" aria-label="Cumulative change in net interest income across the 12-month replay"></svg>
+              </figure>
+            </div>
+            <div class="transport">
+              <div class="transport-buttons">
+                <button class="button primary" id="replay-play" type="button" aria-pressed="false" disabled>Play</button>
+                <button class="button dark-ghost" id="replay-restart" type="button" disabled>Restart</button>
+                <label class="speed" for="replay-speed">Speed <select id="replay-speed" disabled><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+              </div>
+              <div class="scrub">
+                <label for="replay-scrub" class="micro">SIMULATED MONTH</label>
+                <input id="replay-scrub" type="range" min="0" max="12" step="1" value="0" disabled>
+                <div class="range-hints" aria-hidden="true"><span>0</span><span>6</span><span>12</span></div>
+              </div>
+            </div>
+            <p id="replay-status" role="status"></p>
+          </section>
+        </div>
+
+        <dl class="metrics-row" aria-label="Scenario endpoints">
+          <div><dt>FULL-SHOCK ΔEVE</dt><dd id="final-eve">—</dd><span>Opening book, full curve shock</span></div>
+          <div><dt>12M ΔNII · INSTANT</dt><dd id="instant-nii">—</dd><span>Entire move applies in month one</span></div>
+          <div><dt>12M ΔNII · RAMP</dt><dd id="ramp-nii">—</dd><span>Curve shift phases in over a year</span></div>
+          <div><dt>SWAP ΔEVE</dt><dd id="swap-eve">—</dd><span>Pay-fixed hedge impact at full shock</span></div>
+        </dl>
+        <p class="method-aside">During playback, ΔEVE reprices the same opening cash flows at each month's shock level. Cumulative ΔNII measures interest earned and paid across the months that have elapsed.</p>
+      </div>
+    </section>
+
+    <section id="scenarios" class="blue-band band" aria-labelledby="scenario-title">
+      <div class="shell">
+        <div class="section-intro">
+          <p class="kicker"><span>02</span> / SIX-SHOCK SCREEN</p>
+          <div><h2 id="scenario-title">How much capital is exposed?</h2><p>The screen applies each full-size CAD supervisory shape to the current behavioural assumptions and hedge. It compares adverse ΔEVE with 15% of opening Tier 1 capital.</p></div>
+        </div>
+        <div class="scenario-grid">
+          <article class="outlier">
+            <p class="micro">MAXIMUM ADVERSE ΔEVE</p><strong id="worst-ratio">—</strong>
+            <div class="threshold-track" aria-hidden="true"><span id="worst-fill"></span><i id="tier-marker"></i></div>
+            <div class="threshold-caption"><span id="worst-name">—</span><span>15% screen</span></div>
+            <p id="screen-caption">Run the model to compare the scenarios.</p>
+          </article>
+          <div class="table-card">
+            <table class="scenarios-table">
+              <caption>Six reference shocks · 100% scale</caption>
+              <thead><tr><th scope="col">Curve shock</th><th scope="col">ΔEVE</th><th scope="col">Loss / Tier 1</th><th scope="col">Screen</th></tr></thead>
+              <tbody id="scenario-rows"></tbody>
+            </table>
+          </div>
+        </div>
+        <aside class="comparison-note" id="hedge-insight" hidden></aside>
+        <p class="method-aside">Educational CAD-only screen with 200 bp parallel, 275 bp short and 175 bp long parameters. A floor of −75 bp applies under the shock convention. The modeled bank is synthetic.</p>
+      </div>
+    </section>
+
+    <section id="balance-sheet" class="paper band" aria-labelledby="balance-title">
+      <div class="shell">
+        <div class="section-intro">
+          <p class="kicker"><span>03</span> / OPENING BOOK</p>
+          <div><h2 id="balance-title">Where does the rate risk sit?</h2><p>Group principal by its next rate reset or runoff. Compare asset and liability repricing against a stylized Canadian balance sheet.</p></div>
+        </div>
+        <div class="balance-grid">
+          <figure class="gap-card">
+            <div class="figure-head"><div><p class="micro">NET REPRICING GAP</p><h3>Assets less liabilities</h3></div><span>CAD BILLIONS</span></div>
+            <svg id="gap-chart" viewBox="0 0 560 297" role="img" aria-label="Repricing gap by time bucket"></svg>
+            <figcaption><span><i class="swatch eve"></i> Asset-heavy</span><span><i class="swatch nii"></i> Liability-heavy</span></figcaption>
+          </figure>
+          <div class="table-card gap-table">
+            <table>
+              <caption>Next repricing · CAD billions</caption>
+              <thead><tr><th scope="col">Bucket</th><th scope="col">Assets</th><th scope="col">Liabs.</th><th scope="col">Gap</th></tr></thead>
+              <tbody id="gap-rows"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="products-grid">
+          <div><p class="micro">ASSETS</p><h3>Where the bank earns</h3><p>Fixed and floating mortgages, home equity lines, commercial loans and Government of Canada securities.</p><dl id="asset-list"></dl></div>
+          <div><p class="micro">FUNDING</p><h3>What the bank pays</h3><p>Core and non-core deposits, term GICs and wholesale borrowing.</p><dl id="liability-list"></dl></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="method" class="method band" aria-labelledby="method-title">
+      <div class="shell">
+        <div class="section-intro">
+          <p class="kicker"><span>04</span> / MODEL NOTES</p>
+          <div><h2 id="method-title">One balance sheet, two clocks.</h2><p>The case study joins public Canadian yield data and supervisory rate shocks with a fictional bank's balance sheet and behavioural assumptions.</p></div>
+        </div>
+        <div class="method-grid">
+          <article><p class="micro">01 / ECONOMIC VALUE</p><h3>Discount the book</h3><p>Discount future net cash flows under the opening and shocked zero curves. Mortgage CPR and core deposit decay shape cash-flow timing.</p></article>
+          <article><p class="micro">02 / EARNINGS</p><h3>Reset each month</h3><p>Let repricing and replacement business transmit the rate shock. Deposit beta sets how much of a rate move flows into customer rates.</p></article>
+          <article><p class="micro">03 / HEDGE</p><h3>Receive floating</h3><p>Scale a pay-fixed swap and inspect the resulting change in both full-shock EVE and year-one NII.</p></article>
+        </div>
+        <div class="study-strip">
+          <div><span>Opening curve</span><strong id="curve-date">Bank of Canada · Oct 21, 2026</strong></div>
+          <div><span>Shock templates</span><strong>BCBS SRP31 · OSFI B-12</strong></div>
+          <a class="text-link" href="https://github.com/y68wu/irrbb-lab#readme">Methods and limitations <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="handbook-cta"><div class="shell">
+      <div><p class="kicker"><i></i> PROJECT HANDBOOK</p><h2>Four weeks. 28 entries.</h2><p>Follow the modelling, validation and release decisions in a reconstructed build log.</p></div>
+      <a class="button primary" href="handbook.html">Read the handbook <span aria-hidden="true">↗</span></a>
+    </div></section>
+    <p id="app-error" class="app-error" role="alert" hidden>The simulator could not load. Refresh the page or open the source repository.</p>
+    <noscript><p class="app-error">Enable JavaScript to use the simulator. The model notes and handbook remain available.</p></noscript>
+  </main>
+  <footer class="site-footer"><div class="shell"><a class="brand" href="./"><img src="assets/mark.svg" width="26" height="26" alt=""><strong>FORWARD</strong><span>/ BALANCE SHEET LAB</span></a><span>Synthetic Canadian bank · Portfolio research</span><a href="https://github.com/y68wu/irrbb-lab">GitHub ↗</a></div></footer>
+</body>
+</html>

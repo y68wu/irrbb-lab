@@ -1,0 +1,66 @@
+{
+  "asOf": "2026-10-21",
+  "tier1": 7,
+  "units": "CAD billions unless noted",
+  "reference": {
+    "inputs": {
+      "scenario": "parallel_up",
+      "shockScale": 1,
+      "cpr": 0.08,
+      "depositBeta": 0.4,
+      "depositDecayYears": 4,
+      "hedgeNotional": 0,
+      "timing": "instant"
+    },
+    "eveBase": 10.40467124,
+    "eveStressed": 9.19809526,
+    "deltaEve": -1.20657598,
+    "baseNii": 2.5095,
+    "nii": 2.65751035,
+    "deltaNii": 0.14801035,
+    "eveLossToTier1": 0.172368,
+    "breach": true,
+    "swapEve": 0,
+    "swapDeltaNii": 0,
+    "swapFixedRate": 0.03595507,
+    "worstScenario": "parallel_up",
+    "worstDeltaEve": -1.20657598,
+    "worstLossToTier1": 0.172368
+  },
+  "sample": {
+    "inputs": {
+      "scenario": "parallel_up",
+      "shockScale": 1,
+      "cpr": 0.06,
+      "depositBeta": 0.55,
+      "depositDecayYears": 4,
+      "hedgeNotional": 10,
+      "timing": "ramp"
+    },
+    "eveBase": 10.42482256,
+    "eveStressed": 10.05080473,
+    "deltaEve": -0.37401782,
+    "baseNii": 2.40100457,
+    "nii": 2.51654797,
+    "deltaNii": 0.11554341,
+    "eveLossToTier1": 0.05343112,
+    "breach": false,
+    "swapEve": 0.87335838,
+    "swapDeltaNii": 0.10862283,
+    "swapFixedRate": 0.03595507,
+    "worstScenario": "steepener",
+    "worstDeltaEve": -0.67796603,
+    "worstLossToTier1": 0.09685229
+  },
+  "firstPassingHedgeOnGrid": {
+    "hedgeNotional": 2,
+    "worstScenario": "parallel_up",
+    "worstDeltaEve": -1.03190431,
+    "worstLossToTier1": 0.1474149,
+    "breach": false,
+    "upDeltaEve": -1.03190431,
+    "upDeltaNii": 0.18812746,
+    "downDeltaEve": 1.41650606,
+    "downDeltaNii": -0.18806065
+  }
+}

@@ -1,0 +1,10 @@
+assumption,value,worstScenario,worstDeltaEve,worstLossToTier1,breach,parallelUpDeltaNii
+cpr,0.02,parallel_up,-1.3325215,0.19036021,true,0.13257104
+cpr,0.08,parallel_up,-1.20657598,0.172368,true,0.14801035
+cpr,0.18,parallel_up,-1.01906686,0.14558098,false,0.17462016
+depositBeta,0.2,parallel_up,-1.20657598,0.172368,true,0.36801035
+depositBeta,0.4,parallel_up,-1.20657598,0.172368,true,0.14801035
+depositBeta,0.75,parallel_up,-1.20657598,0.172368,true,-0.19698965
+depositDecayYears,2,parallel_up,-1.96120708,0.28017244,true,0.14801035
+depositDecayYears,4,parallel_up,-1.20657598,0.172368,true,0.14801035
+depositDecayYears,6,parallel_up,-0.67509902,0.09644272,false,0.14801035

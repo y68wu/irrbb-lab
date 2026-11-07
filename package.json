@@ -1,0 +1,12 @@
+{
+  "name": "irrbb-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CAD banking-book interest rate risk and 12-month treasury simulation",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test tests/*.mjs",
+    "report": "node scripts/report.mjs"
+  }
+}
